@@ -24,9 +24,22 @@ const categories = [
 ];
 
 const suggestions = [
-  { name: "Søtt møter salt", base: "milk", toppings: ["caramel", "nuts", "sea-salt"], reason: "Myk melkesjokolade med karamell, nøtter og et lite sting av havsalt." },
-  { name: "Sjokolade med et lite kick", base: "dark", toppings: ["chili", "nonstop", "sea-salt"], reason: "Mørk sjokolade med et hint av chili, fargerik Nonstop og sprøtt havsalt." },
-  { name: "Godterifavoritten", base: "white", toppings: ["jelly-men", "pick-and-mix", "licorice"], reason: "Hvit sjokolade med seigmenn, smågodt og en søt lakrisoverraskelse." },
+  { name: "Søtt møter salt", base: "milk", preference: "salty", toppings: ["caramel", "nuts", "sea-salt"], reason: "Myk melkesjokolade med karamell, nøtter og et lite sting av havsalt." },
+  { name: "Leken karamellfest", base: "milk", preference: "sweet", toppings: ["caramel", "nonstop", "jelly-men"], reason: "Rund melkesjokolade med søt karamell og fargerike godteribiter." },
+  { name: "Søtt med et lite kick", base: "milk", preference: "bold", toppings: ["chili", "caramel", "licorice"], reason: "Karamell møter lakris og et forsiktig hint av chili." },
+  { name: "Karamell med knas", base: "milk", preference: "surprise", toppings: ["caramel", "sea-salt", "pick-and-mix"], reason: "Karamell, havsalt og smågodt gir søtt, salt og knas i samme bit." },
+  { name: "Mørk og markant", base: "dark", preference: "bold", toppings: ["chili", "licorice", "sea-salt"], reason: "Mørk sjokolade med chili, lakris og sprøtt havsalt." },
+  { name: "Mørk sjokoladefavoritt", base: "dark", preference: "sweet", toppings: ["caramel", "nonstop", "pick-and-mix"], reason: "Dyp sjokolade får en søt og leken kontrast av karamell og godteri." },
+  { name: "Dyp søtt og salt", base: "dark", preference: "salty", toppings: ["caramel", "nuts", "sea-salt"], reason: "Karamell og nøtter runder av mørk sjokolade med et lite salt løft." },
+  { name: "Uventet mørk miks", base: "dark", preference: "surprise", toppings: ["chili", "caramel", "nonstop"], reason: "Et overraskende møte mellom chili, karamell og fargerik Nonstop." },
+  { name: "Godteridryss", base: "white", preference: "sweet", toppings: ["jelly-men", "nonstop", "pick-and-mix"], reason: "Hvit sjokolade med seigmenn, Nonstop og smågodt." },
+  { name: "Hvit sjokolade med knas", base: "white", preference: "salty", toppings: ["caramel", "nuts", "sea-salt"], reason: "Søt hvit sjokolade balanseres av karamell, nøtter og havsalt." },
+  { name: "Søtt med lakris", base: "white", preference: "bold", toppings: ["licorice", "caramel", "sea-salt"], reason: "Lakris og karamell gir hvit sjokolade en tydelig, salt-søt kontrast." },
+  { name: "Leken lakriskontrast", base: "white", preference: "surprise", toppings: ["jelly-men", "caramel", "licorice"], reason: "Seigmenn og karamell møter en liten lakrisoverraskelse." },
+  { name: "Rosa godteridrøm", base: "pink", preference: "sweet", toppings: ["caramel", "nonstop", "jelly-men"], reason: "Søt karamell og fargerike biter gjør den rosa platen ekstra leken." },
+  { name: "Rosa møter salt", base: "pink", preference: "salty", toppings: ["caramel", "nuts", "sea-salt"], reason: "Karamell, nøtter og havsalt gir en søt-salt kontrast." },
+  { name: "Rosa med et kick", base: "pink", preference: "bold", toppings: ["chili", "licorice", "sea-salt"], reason: "Chili, lakris og havsalt gir en uventet kontrast til den rosa basen." },
+  { name: "Fargerik overraskelse", base: "pink", preference: "surprise", toppings: ["chili", "nonstop", "caramel"], reason: "En leken miks med et hint av chili, karamell og fargerik Nonstop." },
 ];
 
 const shapes = [
@@ -40,10 +53,14 @@ const state = {
   base: null,
   toppings: [],
   occasion: "Bare fordi",
+  preference: "surprise",
+  audience: "adult",
   shape: "classic",
   package: "simple",
   category: "all",
-  suggestionIndex: -1,
+  recommendation: null,
+  labelVisible: false,
+  labIndex: 0,
   imageUrl: null,
 };
 
@@ -207,6 +224,15 @@ function updatePreview() {
   $("#bar-name").textContent = name.length > 23 ? `${name.slice(0, 22)}…` : name;
   $("#bar-name").setAttribute("y", state.shape === "round" ? "207" : "207");
   $("#bar-pieces").setAttribute("stroke", base.id === "white" ? "#5e432d" : "#291711");
+  updateLabel();
+}
+
+function updateLabel() {
+  $("#personal-label").hidden = !state.labelVisible;
+  $("#personal-label-name").textContent = $("#chocolate-name").value.trim() || "Din sjokolade";
+  $("#personal-label-occasion").textContent = state.occasion === "Bare fordi"
+    ? "Laget til deg"
+    : `Til ${state.occasion.toLowerCase()}`;
 }
 
 function allergenList() {
@@ -272,17 +298,69 @@ function showError(message) {
   builderError.focus?.();
 }
 
-function selectSuggestion() {
-  state.suggestionIndex = (state.suggestionIndex + 1) % suggestions.length;
-  const suggestion = suggestions[state.suggestionIndex];
-  state.base = suggestion.base;
-  state.toppings = [...suggestion.toppings];
+function getSuggestion() {
+  const base = state.base || chocolateTypes[0].id;
+  const options = suggestions.filter((item) => item.base === base);
+  const familyFriendly = state.audience === "family" || state.audience === "teen";
+  const preferred = options.find((item) => item.preference === state.preference);
+  const recommendation = preferred || options[0];
+  if (!familyFriendly || !recommendation.toppings.some((id) => ["chili", "licorice"].includes(id))) {
+    return recommendation;
+  }
+  return options.find((item) => !item.toppings.some((id) => ["chili", "licorice"].includes(id))) || recommendation;
+}
+
+function showSuggestion() {
+  const recommendation = getSuggestion();
+  state.recommendation = recommendation;
+  $("#suggestion-title").textContent = recommendation.name;
+  const audienceNote = state.audience === "family" || state.audience === "teen"
+    ? " Tilpasset et mildere smaksuttrykk for den valgte målgruppen."
+    : "";
+  const occasionNote = state.occasion === "Bare fordi"
+    ? ""
+    : ` Et lite forslag til ${state.occasion.toLowerCase()}.`;
+  $("#suggestion-reason").textContent = `${recommendation.reason}${occasionNote}${audienceNote}`;
+  $("#suggestion-toppings").replaceChildren(...recommendation.toppings.map((id) => {
+    const topping = toppings.find((item) => item.id === id);
+    const chip = document.createElement("span");
+    chip.className = "review-chip";
+    chip.textContent = topping.name;
+    return chip;
+  }));
+  $("#suggestion-basis").textContent = "Kurert demo-forslag basert på valgene dine — ikke ekte KI eller kjemisk Matinfo-analyse.";
+  $("#suggestion").hidden = false;
+  $("#apply-suggestion").focus({ preventScroll: true });
+}
+
+function applySuggestion() {
+  if (!state.recommendation) return;
+  state.base = state.recommendation.base;
+  state.toppings = [...state.recommendation.toppings];
+  state.recommendation = null;
+  $("#suggestion").hidden = true;
   renderChocolateOptions();
   renderToppings();
-  $("#suggestion").innerHTML = `<strong>${suggestion.name}:</strong> ${suggestion.reason} <button type="button" class="suggestion__undo" id="undo-suggestion">Bruk dette forslaget</button>`;
-  $("#suggestion").hidden = false;
   updatePreview();
   updateAside();
+}
+
+function showLabIdeas() {
+  const labSelection = [
+    suggestions.find((item) => item.base === "dark" && item.preference === "bold"),
+    suggestions.find((item) => item.base === "milk" && item.preference === "salty"),
+    suggestions.find((item) => item.base === "white" && item.preference === "surprise"),
+    suggestions.find((item) => item.base === "pink" && item.preference === "sweet"),
+  ];
+  const ideas = Array.from({ length: 3 }, (_, index) => labSelection[(state.labIndex + index) % labSelection.length]);
+  $("#lab-results-grid").innerHTML = ideas.map((idea) => {
+    const baseName = chocolateTypes.find((item) => item.id === idea.base).name;
+    const ingredientNames = idea.toppings.map((id) => toppings.find((item) => item.id === id).name).join(" · ");
+    return `<article class="lab-idea"><span>${baseName} · ${idea.name}</span><strong>${ingredientNames}</strong><p>${idea.reason}</p></article>`;
+  }).join("");
+  state.labIndex = (state.labIndex + 1) % labSelection.length;
+  $("#lab-results").hidden = false;
+  $("#lab-results").scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function finishDemoOrder() {
@@ -304,13 +382,26 @@ $("#chocolate-options").addEventListener("click", (event) => {
   const button = event.target.closest("[data-chocolate]");
   if (!button) return;
   state.base = button.dataset.chocolate;
+  state.recommendation = null;
+  $("#suggestion").hidden = true;
   renderChocolateOptions();
   updatePreview();
   updateAside();
 });
 $("#occasion").addEventListener("change", (event) => {
   state.occasion = event.target.value;
+  updateLabel();
   if (state.step === 3) updateReview();
+});
+$("#taste-preference").addEventListener("change", (event) => {
+  state.preference = event.target.value;
+  state.recommendation = null;
+  $("#suggestion").hidden = true;
+});
+$("#gift-audience").addEventListener("change", (event) => {
+  state.audience = event.target.value;
+  state.recommendation = null;
+  $("#suggestion").hidden = true;
 });
 $("#topping-filters").addEventListener("click", (event) => {
   const button = event.target.closest("[data-category]");
@@ -332,19 +423,18 @@ $("#topping-options").addEventListener("click", (event) => {
     $("#topping-hint").classList.add("is-error");
     return;
   }
+  state.recommendation = null;
   $("#suggestion").hidden = true;
   renderToppings();
   updatePreview();
   updateAside();
 });
-$("#suggest-button").addEventListener("click", selectSuggestion);
-$("#suggestion").addEventListener("click", (event) => {
-  if (event.target.id !== "undo-suggestion") return;
-  $("#suggestion").hidden = true;
-  renderChocolateOptions();
-  renderToppings();
-  updatePreview();
-  updateAside();
+$("#suggest-button").addEventListener("click", showSuggestion);
+$("#apply-suggestion").addEventListener("click", applySuggestion);
+$("#lab-button").addEventListener("click", showLabIdeas);
+$("#generate-label").addEventListener("click", () => {
+  state.labelVisible = true;
+  updateLabel();
 });
 $("#shape-options").addEventListener("click", (event) => {
   const button = event.target.closest("[data-shape]");

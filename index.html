@@ -35,16 +35,11 @@
             width="521"
             height="570"
           >
-          <svg class="brand__hat" viewBox="0 -250 521 820" aria-hidden="true">
-            <g transform="rotate(-10 260 88)">
-              <path d="M196 87 C199 14 190 -79 193 -145 Q260 -166 327 -144 C324 -75 321 16 325 87 Q261 104 196 87Z" fill="#51362d" stroke="#65402e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M194 -138 Q260 -158 326 -137 M197 79 Q261 96 324 80 M198 71 Q261 88 323 73" fill="none" stroke="#96745b" stroke-width="3.5" stroke-linecap="round"/>
-              <path d="M209 -121 L231 -136 M207 -101 L235 -126 M207 -79 L239 -108 M207 -56 L244 -87 M207 -33 L248 -68 M208 -10 L252 -48 M209 13 L257 -28 M212 36 L264 -8 M215 56 L273 12 M279 -129 L297 -143 M290 -109 L313 -132 M295 -86 L317 -110 M299 -62 L320 -87 M302 -38 L322 -62 M305 -13 L323 -37 M308 11 L324 -12 M311 35 L326 12 M315 56 L326 36" fill="none" stroke="#aa8b6d" stroke-opacity=".78" stroke-width="2" stroke-linecap="round"/>
-              <path d="M196 45 Q260 58 325 43 L324 67 Q261 82 197 65Z" fill="#984e40" stroke="#65402e" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M198 50 Q261 65 324 48 M198 61 Q261 76 324 59" fill="none" stroke="#ca8871" stroke-width="2" stroke-linecap="round"/>
-              <path d="M142 88 Q137 97 147 104 Q261 125 374 104 Q384 98 378 88 Q264 107 142 88Z" fill="#51362d" stroke="#65402e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M151 94 Q261 115 369 96 M151 100 Q261 122 369 102" fill="none" stroke="#a27e61" stroke-width="2.5" stroke-linecap="round"/>
-            </g>
+          <svg class="brand__hat" viewBox="0 0 521 570" aria-hidden="true">
+            <path d="M190 99 Q207 89 224 87 L222 13 Q267 -1 313 11 L311 86 Q328 90 342 100 Q268 114 190 99Z" fill="#f5ecde" stroke="#65402e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M223 18 Q267 8 312 17 M222 82 Q269 94 313 83 M198 93 Q267 105 336 95" fill="none" stroke="#765039" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M233 49 L245 43 M238 58 L253 48 M239 69 L256 56 M244 77 L262 62 M275 39 L287 32 M284 45 L299 36 M295 54 L307 46 M303 66 L313 59" fill="none" stroke="#79533d" stroke-width="2" stroke-linecap="round"/>
+            <path d="M202 89 Q210 86 218 85 M324 90 L335 92" fill="none" stroke="#58382a" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </span>
         <span class="brand__name">sjokolade<span>professoren</span></span>
@@ -146,15 +141,32 @@
                 <h3 id="step-title-0">Hvilken sjokolade frister?</h3>
                 <p class="step-intro">Velg basen din. Smakene kan du kombinere i neste steg.</p>
                 <div class="choice-grid choice-grid--chocolate" id="chocolate-options"></div>
-                <div class="occasion-field">
-                  <label for="occasion">Hva lager du den til?</label>
-                  <select id="occasion">
-                    <option value="Bare fordi">Bare fordi</option>
-                    <option value="Bursdag">En bursdag</option>
-                    <option value="Takk for hjelpen">En liten takk</option>
-                    <option value="Bryllup">Et bryllup</option>
-                    <option value="Firma eller arrangement">Firma eller arrangement</option>
-                  </select>
+                <div class="personalization-fields">
+                  <label for="occasion">Anledning
+                    <select id="occasion">
+                      <option value="Bare fordi">Bare fordi</option>
+                      <option value="Bursdag">Bursdag</option>
+                      <option value="Takk for hjelpen">En liten takk</option>
+                      <option value="Bryllup">Bryllup</option>
+                      <option value="Firma eller arrangement">Firma eller arrangement</option>
+                    </select>
+                  </label>
+                  <label for="taste-preference">Smakspreferanse
+                    <select id="taste-preference">
+                      <option value="surprise">Overrask meg</option>
+                      <option value="sweet">Søtt og lekent</option>
+                      <option value="salty">Salt og karamellisert</option>
+                      <option value="bold">Kraftig og uventet</option>
+                    </select>
+                  </label>
+                  <label for="gift-audience">Hvem er den til?
+                    <select id="gift-audience">
+                      <option value="adult">En voksen</option>
+                      <option value="teen">En ungdom</option>
+                      <option value="family">Familie / alle aldre</option>
+                      <option value="team">Kollegaer eller et lag</option>
+                    </select>
+                  </label>
                 </div>
               </section>
 
@@ -166,11 +178,20 @@
                   <div class="professor-card__icon" aria-hidden="true">✳</div>
                   <div class="professor-card__copy">
                     <strong>Spør Sjokoladeprofessoren</strong>
-                    <span>Tre forslag som er gode sammen – velg det som frister.</span>
+                    <span>Et personlig forslag basert på sjokolade, anledning og smakspreferanse.</span>
                   </div>
-                  <button class="button button--outline button--suggest" type="button" id="suggest-button">Gi meg et tips <span aria-hidden="true">→</span></button>
+                  <button class="button button--outline button--suggest" type="button" id="suggest-button">Finn min kombinasjon <span aria-hidden="true">→</span></button>
                 </div>
-                <div class="suggestion" id="suggestion" role="status" hidden></div>
+                <div class="suggestion" id="suggestion" aria-live="polite" hidden>
+                  <div class="suggestion__details">
+                    <p class="suggestion__eyebrow">SJOKOLADEPROFESSORENS FORSLAG</p>
+                    <strong class="suggestion__title" id="suggestion-title"></strong>
+                    <p class="suggestion__reason" id="suggestion-reason"></p>
+                    <div class="suggestion__toppings" id="suggestion-toppings"></div>
+                    <p class="suggestion__basis" id="suggestion-basis"></p>
+                  </div>
+                  <button class="button button--primary suggestion__apply" type="button" id="apply-suggestion">Bruk forslaget</button>
+                </div>
                 <div class="filter-row" id="topping-filters" aria-label="Filtrer toppinger"></div>
                 <div class="choice-grid choice-grid--toppings" id="topping-options"></div>
                 <p class="selection-hint" id="topping-hint" aria-live="polite">Velg minst én topping.</p>
@@ -187,6 +208,8 @@
                     <label class="field-label name-label" for="chocolate-name">Hva skal den hete?</label>
                     <input id="chocolate-name" type="text" maxlength="32" value="Min lille favoritt" autocomplete="off">
                     <p class="input-caption"><span id="name-count">18</span>/32 tegn · Navnet vises på etiketten.</p>
+                    <button class="button button--outline label-button" type="button" id="generate-label">Lag etikettforslag <span aria-hidden="true">✧</span></button>
+                    <p class="label-caption">Et personlig grafisk forslag — bildegenerator er ikke tilkoblet.</p>
                     <label class="upload-control" for="image-upload">
                       <span class="upload-control__icon" aria-hidden="true">↥</span>
                       <span><strong>Legg til et bilde</strong><small>Valgfritt · bare synlig i forhåndsvisningen</small></span>
@@ -218,6 +241,13 @@
                         <text id="bar-name" x="140" y="207" text-anchor="middle" fill="#795541" font-size="12" font-family="DM Sans, sans-serif">Min lille favoritt</text>
                       </svg>
                       <img class="preview-image" id="preview-image" alt="Bilde valgt for sjokoladeetiketten" hidden>
+                      <div class="personal-label" id="personal-label" aria-label="Forhåndsvisning av personlig etikett" hidden>
+                        <span class="personal-label__ornament" aria-hidden="true">✳</span>
+                        <span class="personal-label__brand">SJOKOLADEPROFESSOREN</span>
+                        <strong id="personal-label-name">Min lille favoritt</strong>
+                        <span class="personal-label__occasion" id="personal-label-occasion">Laget til deg</span>
+                        <span class="personal-label__ornament" aria-hidden="true">✳</span>
+                      </div>
                     </div>
                     <p class="preview-caption"><span aria-hidden="true">✳</span> Slik kan den se ut – håndlaget med små variasjoner.</p>
                   </div>
@@ -292,6 +322,33 @@
         </div>
       </section>
 
+      <section class="ai-studio-section" id="smakslab">
+        <div class="ai-studio__heading">
+          <p class="eyebrow"><span class="eyebrow__dot"></span> To typer smaksmagi</p>
+          <h2>KI som hjelper — <em>ikke bestemmer.</em></h2>
+          <p>Kunden får en enkel, guidet smaksvenn. Sjokolademakerne får et eget verktøy til å utforske nye kombinasjoner.</p>
+        </div>
+        <div class="ai-studio__cards">
+          <article class="ai-card ai-card--customer">
+            <div class="ai-card__topline"><span class="ai-card__icon" aria-hidden="true">✳</span><span class="ai-card__badge">FOR DEG</span></div>
+            <h3>Sjokoladeprofessoren</h3>
+            <p>Tar hensyn til sjokoladebase, anledning og smakspreferanse. Du velger selv om du vil bruke forslaget eller sette sammen platen på egen hånd.</p>
+            <a href="#designer" class="ai-card__link">Prøv smaksveiledningen <span aria-hidden="true">↗</span></a>
+          </article>
+          <article class="ai-card ai-card--team">
+            <div class="ai-card__topline"><span class="ai-card__icon" aria-hidden="true">⚗</span><span class="ai-card__badge">KONSEPT FOR ANSATTE</span></div>
+            <h3>Fabrikkens smakslab</h3>
+            <p>Et profesjonelt arbeidsverktøy for å utforske uventede kombinasjoner. I en ferdig løsning kan KI sammenholde verifiserte smaks- og sammensetningsdata for ca. 100–120 godterislag fra Matinfo. Fagfolk vurderer forslagene før produksjon.</p>
+            <button class="button button--outline lab-button" type="button" id="lab-button">Vis smakslab-idéer <span aria-hidden="true">→</span></button>
+          </article>
+        </div>
+        <div class="lab-results" id="lab-results" aria-live="polite" hidden>
+          <div class="lab-results__heading"><strong>Idéer til videre utforsking</strong><span>Smakstest og faglig vurdering trengs før produksjon.</span></div>
+          <div class="lab-results__grid" id="lab-results-grid"></div>
+        </div>
+        <p class="ai-studio__note"><strong>Viktig om denne prototypen:</strong> Forslagene er kuraterte demo-eksempler, ikke generert av en KI og ikke analysert mot kjemisk sammensetning eller Matinfo. Ekte allergen- og ingrediensdata må verifiseres før salg. Personlige bilder behandles bare lokalt i forhåndsvisningen.</p>
+      </section>
+
       <section class="story-section" id="om-fabrikken">
         <img
           class="story-mascot"
@@ -314,16 +371,11 @@
             width="521"
             height="570"
           >
-          <svg class="brand__hat" viewBox="0 -250 521 820" aria-hidden="true">
-            <g transform="rotate(-10 260 88)">
-              <path d="M196 87 C199 14 190 -79 193 -145 Q260 -166 327 -144 C324 -75 321 16 325 87 Q261 104 196 87Z" fill="#51362d" stroke="#65402e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M194 -138 Q260 -158 326 -137 M197 79 Q261 96 324 80 M198 71 Q261 88 323 73" fill="none" stroke="#96745b" stroke-width="3.5" stroke-linecap="round"/>
-              <path d="M209 -121 L231 -136 M207 -101 L235 -126 M207 -79 L239 -108 M207 -56 L244 -87 M207 -33 L248 -68 M208 -10 L252 -48 M209 13 L257 -28 M212 36 L264 -8 M215 56 L273 12 M279 -129 L297 -143 M290 -109 L313 -132 M295 -86 L317 -110 M299 -62 L320 -87 M302 -38 L322 -62 M305 -13 L323 -37 M308 11 L324 -12 M311 35 L326 12 M315 56 L326 36" fill="none" stroke="#aa8b6d" stroke-opacity=".78" stroke-width="2" stroke-linecap="round"/>
-              <path d="M196 45 Q260 58 325 43 L324 67 Q261 82 197 65Z" fill="#984e40" stroke="#65402e" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M198 50 Q261 65 324 48 M198 61 Q261 76 324 59" fill="none" stroke="#ca8871" stroke-width="2" stroke-linecap="round"/>
-              <path d="M142 88 Q137 97 147 104 Q261 125 374 104 Q384 98 378 88 Q264 107 142 88Z" fill="#51362d" stroke="#65402e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M151 94 Q261 115 369 96 M151 100 Q261 122 369 102" fill="none" stroke="#a27e61" stroke-width="2.5" stroke-linecap="round"/>
-            </g>
+          <svg class="brand__hat" viewBox="0 0 521 570" aria-hidden="true">
+            <path d="M190 99 Q207 89 224 87 L222 13 Q267 -1 313 11 L311 86 Q328 90 342 100 Q268 114 190 99Z" fill="#f5ecde" stroke="#65402e" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M223 18 Q267 8 312 17 M222 82 Q269 94 313 83 M198 93 Q267 105 336 95" fill="none" stroke="#765039" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M233 49 L245 43 M238 58 L253 48 M239 69 L256 56 M244 77 L262 62 M275 39 L287 32 M284 45 L299 36 M295 54 L307 46 M303 66 L313 59" fill="none" stroke="#79533d" stroke-width="2" stroke-linecap="round"/>
+            <path d="M202 89 Q210 86 218 85 M324 90 L335 92" fill="none" stroke="#58382a" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </span>
         <span class="brand__name">sjokolade<span>professoren</span></span>
