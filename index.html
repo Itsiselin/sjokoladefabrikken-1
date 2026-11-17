@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=separate-text-relief-5">
+  <script src="app.js?v=separate-text-relief-5" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -24,7 +24,7 @@
     <section class="intro" id="discovery">
       <p class="eyebrow">Sjokodesigneren</p>
       <h1>Lag din egen sjokoladeplate</h1>
-      <p>Sett sammen favorittsmaker, legg til et bilde og se sjokoladeplaten og eksempelprisen mens du designer.</p>
+      <p>Sett sammen favorittsmaker, velg bilde, skrift eller ingen dekor og se sjokoladeplaten og eksempelprisen mens du designer.</p>
     </section>
 
     <nav class="journey-nav" aria-label="Kundereise">
@@ -114,27 +114,24 @@
 
         <section class="builder-card personal-card" aria-labelledby="personal-title">
           <h2 id="personal-title">3. Gjør platen personlig</h2>
-          <fieldset class="motif-picker">
-            <legend>Velg motiv</legend>
-            <button type="button" class="motif-option" id="train-motif" aria-pressed="false">
-              <svg viewBox="0 0 64 48" aria-hidden="true">
-                <path d="M12 8h32a6 6 0 0 1 6 6v21H8V14a6 6 0 0 1 4-6Z" fill="#6a252d"/>
-                <path d="M14 13h11v10H14zm16 0h15v10H30z" fill="#fff1d9"/>
-                <path d="M5 35h49l5 6H2zM18 41a5 5 0 1 0 10 0m10 0a5 5 0 1 0 10 0" fill="#8d5c37" stroke="#43291f" stroke-width="2"/>
-                <path d="M4 47h56" stroke="#9c684e" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-              <span>Togmotiv</span>
-            </button>
-            <p class="motif-note">Et lite tog på platen — inspirert av gaveideen til sønnen.</p>
-          </fieldset>
-          <label class="upload-label" for="image-upload">Bilde på platen (valgfritt)</label>
-          <label class="upload-control" for="image-upload">
-            <span class="upload-icon" aria-hidden="true">↑</span>
-            <span><strong>Velg et bilde</strong><small>JPG, PNG eller WebP · vises lokalt i forhåndsvisningen</small></span>
-            <input id="image-upload" type="file" accept="image/jpeg,image/png,image/webp">
-          </label>
-          <button type="button" class="remove-image" id="remove-image" hidden>Fjern bildet</button>
-          <p class="privacy-note">Bildet lastes ikke opp eller lagres i denne prototypen.</p>
+          <p class="personal-note">Velg bilde, skrift eller ingenting. Forsiden får kun bildet eller skriften som et detaljert, opphøyd sjokoladerelieff. Toppingen legges på den glatte baksiden.</p>
+          <div class="decoration-options" role="group" aria-label="Dekor på platen">
+            <button type="button" class="selected" data-decoration="none" aria-pressed="true">Ingenting</button>
+            <button type="button" data-decoration="image" aria-pressed="false">Bilde</button>
+            <button type="button" data-decoration="text" aria-pressed="false">Skrift</button>
+          </div>
+          <div id="image-fields" hidden>
+            <label class="upload-control" for="image-upload"><span><strong>Velg et bilde</strong><small>JPG, PNG eller WebP · tydelige motiver fungerer best</small></span><input id="image-upload" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <button type="button" class="remove-image" id="remove-image" hidden>Fjern bildet</button>
+            <p id="image-status" class="personal-note" role="status" aria-live="polite"></p>
+            <button type="button" class="remove-image" id="retry-image" hidden>Prøv bildet igjen</button>
+            <p class="personal-note">Relieffet starter 0,5 mm over platen og øker med 3 mm per nivå: 0,5 → 3,5 → 6,5 → 9,5 mm. Nivåene har avrundede overganger og mykere bakgrunn. Bildet behandles lokalt.</p>
+          </div>
+          <div id="text-fields" class="personal-fields" hidden>
+            <p class="personal-note text-relief-note">Bokstavene formes i sjokolade og heves 3,5 mm fra platen.</p>
+            <div><label for="decoration-text">Din tekst (maks 40 tegn)</label><input id="decoration-text" maxlength="40" placeholder="For eksempel: Gratulerer!"></div>
+            <div><label for="decoration-font">Skrifttype</label><select id="decoration-font"><option value="classic">Klassisk</option><option value="handwriting">Håndskrift</option><option value="modern">Moderne</option></select></div>
+          </div>
         </section>
       </div>
 
@@ -142,6 +139,8 @@
         <div class="preview-card__heading">
           <p class="eyebrow">Forhåndsvisning</p>
           <h2 id="preview-title">Din sjokoladeplate</h2>
+          <div class="side-options" role="group" aria-label="Vis side av sjokoladeplaten"><button type="button" data-side="front" class="selected" aria-pressed="true">Forside</button><button type="button" data-side="back" aria-pressed="false">Bakside</button></div>
+          <p class="side-note" id="side-note">Forsiden med bilde eller skrift som opphøyd sjokoladerelieff.</p>
         </div>
         <div class="preview-stage">
           <div class="chocolate-bar" id="chocolate-bar" aria-label="Melkesjokoladeplate">
@@ -152,13 +151,8 @@
               <span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
             <div class="bar-toppings" id="bar-toppings" aria-hidden="true"></div>
-            <svg class="bar-motif" id="bar-motif" viewBox="0 0 64 48" aria-hidden="true" hidden>
-              <path d="M12 8h32a6 6 0 0 1 6 6v21H8V14a6 6 0 0 1 4-6Z" fill="#6a252d"/>
-              <path d="M14 13h11v10H14zm16 0h15v10H30z" fill="#fff1d9"/>
-              <path d="M5 35h49l5 6H2zM18 41a5 5 0 1 0 10 0m10 0a5 5 0 1 0 10 0" fill="#8d5c37" stroke="#43291f" stroke-width="2"/>
-              <path d="M4 47h56" stroke="#9c684e" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <img class="bar-image" id="bar-image" alt="" hidden>
+            <canvas id="bar-relief" class="bar-relief" width="1280" height="720" role="img" aria-label="Opphøyd motiv i sjokolade" hidden></canvas>
+            <img class="bar-image" id="bar-image" alt="Ditt bilde i sjokoladerelieff" hidden>
           </div>
         </div>
         <div class="preview-details">

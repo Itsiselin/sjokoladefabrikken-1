@@ -184,3 +184,113 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+.personal-note { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.decoration-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 16px 0; }
+.decoration-options button { min-height: 46px; border: 1px solid var(--border); border-radius: 10px; background: #fffdf8; font-weight: 700; }
+.decoration-options button.selected { border: 2px solid var(--wine); background: #f3e3df; }
+.upload-control:focus-within { outline: 3px solid #a95053; outline-offset: 3px; }
+.bar-image { width: 48%; height: 65%; box-shadow: none; border: 0; border-radius: 8px; object-fit: contain; filter: url(#chocolate-relief) drop-shadow(1px 2px 0 var(--bar-dark)) drop-shadow(2px 4px 2px #28120888); transform: translate(-50%, -50%); }
+.bar-greeting { top: 50%; bottom: auto; right: 9%; left: 9%; overflow: visible; color: var(--bar-light); font-size: clamp(16px, 2.5vw, 29px); line-height: 1.3; white-space: normal; overflow-wrap: anywhere; transform: translateY(-50%); text-shadow: -1px -1px 0 #fff4, 1px 1px 0 var(--piece-dark), 2px 2px 0 var(--bar-dark), 3px 3px 0 var(--bar-dark), 4px 5px 3px #28120888; }
+.bar-greeting.font-modern { font-size: clamp(14px, 2vw, 23px); }
+.bar-relief { position: absolute; z-index: 2; inset: 10%; width: 80%; height: 80%; pointer-events: none; filter: drop-shadow(2px 4px 2px #28120877); }
+.side-options { display: flex; gap: 8px; margin-top: 14px; }
+.side-options button { min-height: 38px; padding: 7px 16px; border: 1px solid var(--border); border-radius: 9px; background: #fffdf8; font-size: 13px; font-weight: 700; }
+.side-options button.selected { border-color: var(--wine); background: #f3e3df; }
+.side-note { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.chocolate-bar .chocolate-pieces { visibility: hidden; }
+.chocolate-bar:not(.show-back) .bar-toppings { visibility: hidden; }
+.chocolate-bar { background: linear-gradient(145deg, var(--piece-light), var(--piece-dark)); }
+.bar-relief { inset: 3%; width: 94%; height: 94%; }
+/* Visible chocolate thickness and a raised relief above the surface. */
+.chocolate-bar { box-shadow: 1px 2px 0 var(--piece-dark), 2px 4px 0 var(--bar-dark), 3px 6px 0 var(--bar-dark), 4px 8px 0 var(--bar-dark), 5px 10px 0 var(--bar-dark), 6px 18px 25px rgba(61, 34, 26, .34), inset 0 3px 6px rgba(255,255,255,.23), inset 0 -4px 8px rgba(48,24,18,.22); }
+.bar-relief { filter: drop-shadow(3px 6px 2px #28120888); }
+/* A narrow molded rim frames the relief, like a cast chocolate tablet. */
+.chocolate-bar:not(.show-back)::after { content: ""; position: absolute; inset: 5px; border: 3px solid var(--piece-dark); border-radius: 11px; box-shadow: inset 1px 1px 1px #fff3, 1px 2px 2px #200e0a99; pointer-events: none; z-index: 3; }
+.bar-relief { filter: drop-shadow(1px 2px 1px #28120877); }
+.bar-relief { filter: none; }
+
+/* Soft directional light and a subtle cocoa surface, like molded chocolate. */
+.preview-stage {
+  background:
+    radial-gradient(ellipse at 45% 76%, #7055441a, transparent 58%),
+    radial-gradient(ellipse at 24% 15%, #fffaf3 0%, #f2e6d7 58%, #e5d3bd 100%);
+  padding-top: 32px;
+  padding-bottom: 40px;
+}
+.chocolate-bar {
+  border: 1px solid color-mix(in srgb, var(--bar-dark) 80%, transparent);
+  border-radius: 16px 17px 14px 15px;
+  background:
+    radial-gradient(ellipse at 20% 0%, #fff3d719 0%, transparent 58%),
+    radial-gradient(ellipse at 90% 100%, #160c0926 0%, transparent 65%),
+    linear-gradient(155deg, var(--bar-light) 0%, color-mix(in srgb, var(--bar-light) 82%, var(--piece-dark)) 60%, var(--piece-dark) 100%);
+  box-shadow:
+    inset 0 1px 1px #fff6dc55,
+    inset 1px 0 1px #fff3d71a,
+    inset -1px -2px 3px #160b0938,
+    0 1px 0 var(--piece-dark),
+    0 2px 0 var(--piece-dark),
+    0 3px 0 color-mix(in srgb, var(--piece-dark) 85%, var(--bar-dark)),
+    0 4px 0 color-mix(in srgb, var(--piece-dark) 70%, var(--bar-dark)),
+    0 5px 0 color-mix(in srgb, var(--piece-dark) 55%, var(--bar-dark)),
+    0 6px 0 color-mix(in srgb, var(--piece-dark) 40%, var(--bar-dark)),
+    0 7px 1px var(--bar-dark),
+    1px 10px 7px #24130e28,
+    5px 20px 22px #24130e2b,
+    9px 32px 42px #24130e19;
+}
+.chocolate-bar::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 3;
+  opacity: .16;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23808080' filter='url(%23grain)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+.chocolate-bar:not(.show-back)::after {
+  inset: 4px;
+  border: 1px solid color-mix(in srgb, var(--bar-dark) 35%, transparent);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 1px #fff1cb28, 0 1px 1px #fff1cb12;
+}
+
+/* Product angle exposes the solid edge instead of presenting a flat rectangle. */
+.preview-stage { perspective: 1000px; min-height: 350px; }
+.chocolate-bar {
+  width: min(94%, 480px);
+  transform: perspective(1000px) rotateX(25deg) rotateY(-12deg) rotateZ(-6deg);
+  border-radius: 13px;
+  background:
+    radial-gradient(ellipse 85% 34% at 30% -5%, #fff1d63d, transparent 80%),
+    radial-gradient(ellipse 90% 70% at 95% 100%, #1309063d, transparent 90%),
+    linear-gradient(145deg, var(--bar-light), var(--piece-dark));
+  box-shadow:
+    inset 0 2px 2px #fff1d652,
+    inset 2px 0 3px #fff1d61c,
+    inset -1px -3px 4px #170a084a,
+    1px 1px 0 var(--piece-dark),
+    1px 2px 0 var(--piece-dark),
+    2px 3px 0 var(--piece-dark),
+    2px 4px 0 var(--piece-dark),
+    3px 5px 0 var(--bar-dark),
+    3px 6px 0 var(--bar-dark),
+    4px 7px 0 var(--bar-dark),
+    4px 8px 0 var(--bar-dark),
+    5px 9px 0 var(--bar-dark),
+    5px 10px 0 var(--bar-dark),
+    6px 11px 1px var(--bar-dark),
+    7px 16px 7px #1a0c0759,
+    14px 30px 25px #2a180e38;
+}
+.chocolate-bar:not(.show-back)::after { border-color: #ffffff10; box-shadow: inset 0 1px 2px #fff2dc24; }
+.swatch-milk { background: linear-gradient(135deg, #865238, #3d2217); }
+.swatch-dark { background: linear-gradient(135deg, #4c3026, #20130f); }
+.swatch-white { background: linear-gradient(135deg, #ead8b2, #bda077); }
+@media (max-width: 650px) {
+  .preview-stage { min-height: 285px; }
+  .chocolate-bar { width: min(88%, 330px); }
+}
+.text-relief-note { grid-column: 1 / -1; margin: 0; }
