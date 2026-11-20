@@ -4,18 +4,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#faefe2">
-  <title>SjokoDesigneren — Sjokoladefabrikken</title>
+  <title>SjokoDesigneren — Fryda AS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=separate-text-relief-5">
-  <script src="app.js?v=separate-text-relief-5" defer></script>
+  <link rel="stylesheet" href="styles.css?v=stored-flavors-1">
+  <script src="catalog.js?v=stored-flavors-1" defer></script>
+  <script src="flavor-combinations.js?v=stored-flavors-1" defer></script>
+  <script src="taste-chat.js?v=stored-flavors-1" defer></script>
+  <script src="app.js?v=stored-flavors-1" defer></script>
+  <script src="professor.js?v=stored-flavors-1" defer></script>
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="#" aria-label="Sjokoladefabrikken, start på nytt">
       <span class="brand__star" aria-hidden="true">✦</span>
-      <span>Marsipan- og sjokoladefabrikken</span>
+      <span>Fryda AS · Sjokoladefabrikken</span>
     </a>
     <span class="header-note">Posebyen · Kristiansand</span>
   </header>
@@ -42,21 +46,9 @@
     <div class="designer-layout">
       <div class="builder">
         <section class="builder-card chocolate-card" aria-labelledby="chocolate-title">
-          <h2 id="chocolate-title">1. Velg sjokolade</h2>
-          <div class="chocolate-options" id="chocolate-options">
-            <button type="button" class="chocolate-option selected" data-chocolate="milk" aria-pressed="true">
-              <span class="chocolate-swatch swatch-milk" aria-hidden="true"></span>
-              <span>Melkesjokolade</span>
-            </button>
-            <button type="button" class="chocolate-option" data-chocolate="dark" aria-pressed="false">
-              <span class="chocolate-swatch swatch-dark" aria-hidden="true"></span>
-              <span>Mørk sjokolade</span>
-            </button>
-            <button type="button" class="chocolate-option" data-chocolate="white" aria-pressed="false">
-              <span class="chocolate-swatch swatch-white" aria-hidden="true"></span>
-              <span>Hvit sjokolade</span>
-            </button>
-          </div>
+          <h2 id="chocolate-title">1. Velg fyll</h2>
+          <p class="personal-note">Fyll er sjokoladetypen i selve platen.</p>
+          <div class="chocolate-options" id="chocolate-options"></div>
           <p class="base-price-note">Eksempelpris fra 179 kr · opptil 6 typer smågodt</p>
         </section>
 
@@ -64,38 +56,33 @@
           <div class="section-title-row">
             <h2 id="toppings-title">2. Velg smågodt</h2>
             <button class="professor-toggle" id="professor-toggle" type="button" aria-expanded="false" aria-controls="professor-panel">
-              <span aria-hidden="true">✦</span> Smaksprofessoren
+              <span aria-hidden="true">✦</span> Spør Smaksprofessoren
             </button>
           </div>
 
           <section class="professor-panel" id="professor-panel" hidden aria-labelledby="professor-title">
             <div class="professor-panel__header">
-              <div>
-                <h3 id="professor-title">Chat med Smaksprofessoren</h3>
-                <p>Fortell hva du liker, så finner vi en kombinasjon sammen.</p>
-              </div>
-              <button type="button" class="close-button" id="close-professor" aria-label="Lukk">×</button>
+              <div><p class="eyebrow">Fryda AS · Smaksatelier</p><h3 id="professor-title">Smaksprofessoren</h3><p>Små innfall. Store smaksopplevelser.</p></div>
+              <button type="button" class="close-button" id="close-professor" aria-label="Lukk Smaksprofessoren">×</button>
             </div>
-            <div class="chat-log" id="chat-log" role="log" aria-live="polite">
-              <div class="chat-message chat-message--professor">
-                <strong>Smaksprofessoren</strong>
-                <p>Hei! Leter du etter en gave, en favorittsmak eller noe helt nytt?</p>
-              </div>
-            </div>
-            <div class="suggestion-buttons">
-              <button type="button" data-prompt="gave">Jeg leter etter en gave</button>
-              <button type="button" data-prompt="nytt">Jeg vil prøve noe nytt</button>
+            <p class="ai-connection" role="status">Lagrede smakskombinasjoner · ikke KI</p>
+            <div class="chat-log" id="chat-log" role="log" aria-label="Samtale med Smaksprofessoren" aria-live="polite" tabindex="0"></div>
+            <div class="suggestion-buttons" aria-label="Velg et smakstema">
+              <button type="button" data-prompt="Søtt og salt">Søtt og salt</button>
+              <button type="button" data-prompt="Friskt og fruktig">Friskt og fruktig</button>
+              <button type="button" data-prompt="Overrask meg">Overrask meg</button>
             </div>
             <form class="chat-form" id="chat-form">
-              <label for="chat-input">Melding</label>
-              <div class="chat-form__row">
-                <input id="chat-input" type="text" placeholder="F.eks. Hva passer til mørk sjokolade?">
-                <button type="submit">Send</button>
-              </div>
+              <label for="chat-input">Hva har du lyst på?</label>
+              <div class="chat-form__row"><input id="chat-input" type="text" maxlength="1500" autocomplete="off" placeholder="Jeg liker mørk sjokolade, men ikke for bitter …"><button id="chat-send" type="submit">Send</button></div>
             </form>
-            <p class="demo-note">Smaksforslagene er enkle demo-forslag, ikke KI-genererte.</p>
+            <p id="chat-error" class="chat-error" role="alert" hidden></p>
+            <div class="chat-actions"><button type="button" id="chat-reset">Ny samtale</button></div>
+            <p class="ai-privacy">Svarene hentes fra lagrede smakskombinasjoner ut fra ordene du skriver. Samtalen lagres bare i denne nettleserøkten og sendes ikke til en KI-tjeneste.</p>
           </section>
 
+          <details class="allergen-filter"><summary>Allergenfilter</summary><p>Unngå valgte allergener. Ukjente opplysninger godkjennes ikke av filteret.</p><div id="allergen-options" class="allergen-options" role="group" aria-label="Allergener du vil unngå"></div><label class="severe-allergy"><input id="severe-allergy" type="checkbox"> Jeg må ta hensyn til alvorlig allergi</label></details>
+          <p class="allergen-status" id="allergen-filter-status" role="status"></p>
           <label class="search-label" for="topping-search">Søk etter smågodt</label>
           <input class="search-input" id="topping-search" type="search" placeholder="For eksempel lakris">
           <div class="filters" id="topping-filters" role="group" aria-label="Filtrer smågodt">
@@ -109,7 +96,7 @@
           </div>
           <div class="topping-grid" id="topping-options" aria-live="polite"></div>
           <p class="selection-count" id="selection-count" aria-live="polite">0 av 6 valgt</p>
-          <p class="allergen-disclaimer"><strong>Allergeninfo:</strong> Vises ved hvert godteri. Opplysningene er foreløpige eksempeldata og må kontrolleres mot faktiske produktdata før salg.</p>
+          <p class="allergen-disclaimer"><strong>Allergeninfo:</strong> Produktopplysningene er ikke verifisert. Matinfo er ikke tilkoblet. Avklar ingredienser og krysskontakt med Fryda AS før bestilling, særlig ved alvorlig allergi.</p>
         </section>
 
         <section class="builder-card personal-card" aria-labelledby="personal-title">

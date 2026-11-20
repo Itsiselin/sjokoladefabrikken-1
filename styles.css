@@ -294,3 +294,46 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
   .chocolate-bar { width: min(88%, 330px); }
 }
 .text-relief-note { grid-column: 1 / -1; margin: 0; }
+
+/* Smaksprofessoren: cream, wine and a quiet gold accent. */
+.chocolate-options { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.professor-toggle { white-space: normal; text-align: center; }
+.professor-panel { border-color: #cdb88b; background: linear-gradient(145deg, #fffbf2, #f7eddf); padding: 18px; }
+.professor-panel .eyebrow { margin-bottom: 7px; color: #8b7243; font-size: 9px; }
+.professor-panel h3 { font-size: 24px; color: var(--wine); }
+.professor-panel__header > div { min-width: 0; }
+.ai-connection { display: flex; align-items: center; gap: 7px; padding: 9px 0; margin: 10px 0 0; border-top: 1px solid #ddcda9; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.ai-connection::before { content: ""; flex: 0 0 6px; height: 6px; border-radius: 50%; background: #9f8a77; }
+.ai-connection[data-state="online"]::before { background: #57734c; }
+.ai-connection[data-state="offline"]::before { background: var(--wine); }
+.chat-log { max-height: 420px; min-height: 70px; padding-right: 4px; scrollbar-width: thin; }
+.chat-message { min-width: 0; width: fit-content; max-width: 96%; border: 1px solid #e6d9c7; font-size: 13px; }
+.chat-message p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.chat-message--user { border-color: #e5cfc7; }
+.chat-message--failed { border-style: dashed; opacity: .7; }
+.chat-message--failed small { display: block; margin-top: 6px; color: var(--wine); font-size: 10px; }
+.chat-empty { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.taste-suggestion { margin-top: 12px; padding: 12px; border: 1px solid #cdb88b; border-radius: 9px; background: #fffaf0; }
+.taste-suggestion h4 { margin: 0 0 7px; color: var(--wine); font-family: var(--serif); font-size: 18px; }
+.taste-suggestion ul { display: flex; flex-wrap: wrap; gap: 5px; padding: 0; margin: 0 0 10px; list-style: none; }
+.taste-suggestion li { padding: 4px 7px; border-radius: 5px; background: #efe4d1; font-size: 11px; }
+.chat-message .suggestion-allergens { margin: 0 0 10px; color: #7a6558; font-size: 10px; line-height: 1.5; }
+.apply-suggestion { width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid var(--wine); border-radius: 8px; background: var(--wine); color: #fff8e9; font-weight: 700; font-size: 12px; }
+.chat-form button { min-width: 64px; background: var(--wine); color: #fff8e9; }
+.chat-pending { margin: 10px 0 0; color: var(--wine); font-size: 12px; }
+.chat-error { margin: 10px 0 0; padding: 9px; border-left: 3px solid var(--wine); color: var(--wine); background: #f6e8e3; font-size: 12px; line-height: 1.5; }
+.chat-actions { display: flex; flex-wrap: wrap; gap: 7px 14px; margin-top: 12px; }
+.chat-actions button { min-height: 30px; padding: 3px 0; border: 0; border-bottom: 1px solid #bd9e74; color: #755044; background: none; font-size: 11px; }
+.ai-privacy { margin: 12px 0 0; font-size: 10px; line-height: 1.55; color: var(--muted); }
+.professor-panel button:disabled { opacity: .5; cursor: not-allowed; }
+.allergen-filter { margin: 0 0 10px; padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fffaf2; font-size: 12px; }
+.allergen-filter summary { min-height: 24px; cursor: pointer; color: var(--wine); font-weight: 700; }
+.allergen-filter p { color: var(--muted); line-height: 1.5; }
+.allergen-options { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 5px 12px; }
+.allergen-options label, .severe-allergy { display: flex; align-items: center; gap: 7px; min-height: 34px; cursor: pointer; }
+.allergen-options input, .severe-allergy input { width: 16px; height: 16px; flex: 0 0 16px; accent-color: var(--wine); }
+.severe-allergy { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border); }
+.allergen-status { margin: 0 0 14px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+summary:focus-visible { outline: 3px solid #a95053; outline-offset: 3px; }
+@media (max-width: 850px) { .chocolate-options { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 400px) { .allergen-options { grid-template-columns: 1fr; } .professor-panel { padding: 12px; } }

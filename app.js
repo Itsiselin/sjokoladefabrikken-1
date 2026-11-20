@@ -1,38 +1,13 @@
-const chocolates = {
-  milk: { name: "Melkesjokolade", colors: ["#865238", "#3d2217", "#633b28"] },
-  dark: { name: "Mørk sjokolade", colors: ["#4c3026", "#20130f", "#382118"] },
-  white: { name: "Hvit sjokolade", colors: ["#ead8b2", "#bda077", "#d3b98c"] },
-};
-
-const toppings = [
-  { name: "Nonstop", category: "Søtt", note: "Eks.: Melk, soya", color: "#cb4b42", shape: "candy" },
-  { name: "Seigmenn", category: "Søtt", paid: true, color: "#e5aa54", shape: "gummy" },
-  { name: "Salt lakris", category: "Salt", note: "Eks.: Hvete", color: "#382828", shape: "licorice" },
-  { name: "Myk karamell", category: "Søtt", note: "Eks.: Melk", color: "#aa7047", shape: "caramel" },
-  { name: "Bringebærbiter", category: "Fruktig", paid: true, color: "#b7395f", shape: "raspberry" },
-  { name: "Havsalt", category: "Salt", paid: true, color: "#f0e5c8", shape: "salt" },
-  { name: "Mini-marshmallows", category: "Søtt", paid: true, color: "#e9c2c8", shape: "marshmallow" },
-  { name: "Kjeksbiter", category: "Sprøtt", note: "Eks.: Hvete, melk", color: "#ad805c", shape: "cookie" },
-  { name: "Salte kringler", category: "Salt", note: "Eks.: Hvete", color: "#865537", shape: "pretzel" },
-  { name: "Surt eple", category: "Syrlig", paid: true, color: "#86a65c", shape: "apple" },
-  { name: "Sure jordbær", category: "Syrlig", paid: true, color: "#d85d69", shape: "strawberry" },
-  { name: "Sitronbiter", category: "Syrlig", paid: true, color: "#e8d75c", shape: "lemon" },
-  { name: "Jordbærbiter", category: "Fruktig", paid: true, color: "#ce6271", shape: "strawberry-piece" },
-  { name: "Appelsinskall", category: "Fruktig", paid: true, color: "#e78a3b", shape: "orange" },
-  { name: "Krokankrønsj", category: "Sprøtt", note: "Eks.: Mandler, melk", color: "#b1814e", shape: "brittle" },
-  { name: "Hasselnøtter", category: "Sprøtt", note: "Eks.: Hasselnøtter", color: "#95643d", shape: "hazelnut" },
-  { name: "Marsipanbiter", category: "Søtt", note: "Eks.: Mandler", color: "#d4ad83", shape: "marzipan" },
-  { name: "Vaniljefudge", category: "Søtt", note: "Eks.: Melk", color: "#e5cba1", shape: "fudge" },
-  { name: "Surt colagodteri", category: "Syrlig", paid: true, color: "#6e4850", shape: "cola" },
-  { name: "Chiliflak", category: "Sterkt", paid: true, color: "#ba3c30", shape: "chili" },
-  { name: "Salt karamell", category: "Salt", note: "Eks.: Melk", color: "#bd8151", shape: "salted-caramel" },
-];
+const catalog = globalThis.FRYDA_CATALOG;
+const chocolates = Object.fromEntries(catalog.chocolates.map(product => [product.id, product]));
+const toppings = catalog.toppings;
 
 const state = {
   chocolate: "milk",
   selectedToppings: new Set(),
   filter: "Alle",
   query: "",
+  allergenFilter: { excluded: [], severe: false, needsReview: false },
   imageUrl: null,
   imageProcessing: false,
   sourceFile: null,
@@ -50,6 +25,78 @@ const toppingGrid = $("#topping-options");
 let toastTimeout;
 let imageJob = 0;
 
+
+
+function productAllowedByFilter(product) {
+  const filter=state.allergenFilter;
+  if(!filter.excluded.length && !filter.severe && !filter.needsReview) return true;
+  const info=product.allergens;
+  if(info.status!=="verified" || !info.source || !info.verifiedAt || !Array.isArray(info.contains) || !Array.isArray(info.mayContain) || filter.severe || filter.needsReview) return false;
+  return !filter.excluded.some(id=>info.contains.includes(id)||info.mayContain.includes(id));
+}
+
+function renderChocolateOptions() {
+  $("#chocolate-options").replaceChildren(...catalog.chocolates.map(product=>{
+    const button=document.createElement("button");
+    button.type="button";
+    button.dataset.chocolate=product.id;
+    button.className="chocolate-option";
+    const selected=state.chocolate===product.id;
+    button.classList.toggle("selected",selected);
+    button.setAttribute("aria-pressed",String(selected));
+    button.disabled=!selected && !productAllowedByFilter(product);
+    const swatch=document.createElement("span");
+    swatch.className="chocolate-swatch";
+    swatch.style.background='linear-gradient(135deg,'+product.colors[0]+','+product.colors[1]+')';
+    swatch.setAttribute("aria-hidden","true");
+    const label=document.createElement("span"); label.textContent=product.name;
+    button.append(swatch,label);
+    button.addEventListener("click",()=>{
+      state.chocolate=product.id;
+      renderChocolateOptions(); updatePreview();
+    });
+    return button;
+  }));
+}
+
+function renderAllergenOptions() {
+  $("#allergen-options").replaceChildren(...catalog.allergens.map(allergen=>{
+    const label=document.createElement("label");
+    const input=document.createElement("input");
+    input.type="checkbox"; input.value=allergen.id;
+    input.checked=state.allergenFilter.excluded.includes(allergen.id);
+    input.addEventListener("change",readAllergenFilter);
+    const text=document.createElement("span"); text.textContent=allergen.name;
+    label.append(input,text);return label;
+  }));
+  $("#severe-allergy").checked=state.allergenFilter.severe;
+  $("#allergen-filter-status").textContent=(state.allergenFilter.excluded.length || state.allergenFilter.severe || state.allergenFilter.needsReview)
+    ? "Filter aktivt. Produkter med manglende opplysninger kan ikke godkjennes. Avklar ingredienser og krysskontakt med Fryda AS."
+    : "Allergenopplysninger mangler for alle foreløpige produkter. Matinfo er ikke tilkoblet.";
+}
+function readAllergenFilter() {
+  setAllergenFilter({excluded:[...document.querySelectorAll('#allergen-options input:checked')].map(input=>input.value),severe:$("#severe-allergy").checked,needsReview:false});
+}
+function setAllergenFilter(filter) {
+  state.allergenFilter={excluded:[...filter.excluded],severe:filter.severe===true,needsReview:filter.needsReview===true};
+  renderAllergenOptions();renderChocolateOptions();renderToppings();updatePreview();
+  window.dispatchEvent(new Event("fryda:filterchange"));
+}
+$("#severe-allergy").addEventListener("change",readAllergenFilter);
+
+window.FrydaDesigner={
+  getSelection:()=>({chocolateId:state.chocolate,toppingIds:[...state.selectedToppings]}),
+  getAllergenFilter:()=>({...state.allergenFilter,excluded:[...state.allergenFilter.excluded]}),
+  setAllergenFilter,
+  applySelection(selection) {
+    if(!chocolates[selection.chocolateId] || !Array.isArray(selection.toppingIds) || selection.toppingIds.length<2 || selection.toppingIds.length>4 || new Set(selection.toppingIds).size!==selection.toppingIds.length || !productAllowedByFilter(chocolates[selection.chocolateId]) || selection.toppingIds.some(id=>!toppings.find(p=>p.id===id && productAllowedByFilter(p)))) throw new Error("Forslaget passer ikke med gjeldende allergenfilter.");
+    state.chocolate=selection.chocolateId;
+    state.selectedToppings=new Set(selection.toppingIds);
+    state.side="back";
+    renderChocolateOptions();renderToppings();updatePreview();
+    showToast("Kombinasjonen er lagt på platen. Allergenopplysninger må fortsatt avklares.");
+  }
+};
 
 function createToppingShape(topping, preview = false) {
   const shape = document.createElement("span");
@@ -71,12 +118,12 @@ function renderToppings() {
   });
 
   toppingGrid.replaceChildren(...visible.map((topping) => {
-    const selected = state.selectedToppings.has(topping.name);
+    const selected = state.selectedToppings.has(topping.id);
     const button = document.createElement("button");
     button.type = "button";
     button.className = `topping-option${selected ? " selected" : ""}`;
     button.setAttribute("aria-pressed", String(selected));
-    button.disabled = !selected && state.selectedToppings.size >= 6;
+    button.disabled = !selected && (state.selectedToppings.size >= 6 || !productAllowedByFilter(topping));
 
     const name = document.createElement("span");
     name.className = "topping-name";
@@ -84,10 +131,10 @@ function renderToppings() {
 
     const note = document.createElement("span");
     note.className = "topping-note";
-    note.textContent = topping.note || (topping.paid ? "+ 9 kr" : "");
+    note.textContent = `${topping.paid ? "+ 9 kr · " : ""}Allergeninfo ikke bekreftet`;
 
     button.append(createToppingShape(topping), name, note);
-    button.addEventListener("click", () => toggleTopping(topping.name));
+    button.addEventListener("click", () => toggleTopping(topping.id));
     return button;
   }));
   updateSelection();
@@ -107,7 +154,7 @@ function toggleTopping(name) {
 }
 
 function updateSelection() {
-  const selected = [...state.selectedToppings];
+  const selected = [...state.selectedToppings].map(id => toppings.find(product => product.id === id)?.name).filter(Boolean);
   $("#selection-count").textContent = `${selected.length} av 6 valgt${selected.length ? ` · ${selected.join(", ")}` : ""}`;
 }
 
@@ -122,7 +169,7 @@ function updatePreview() {
   bar.setAttribute("aria-label", `${chocolate.name}plate`);
   $("#preview-chocolate").textContent = chocolate.name;
 
-  const selected = toppings.filter((topping) => state.selectedToppings.has(topping.name));
+  const selected = toppings.filter((topping) => state.selectedToppings.has(topping.id));
   $("#preview-toppings").textContent = selected.length
     ? selected.map((topping) => topping.name).join(" · ")
     : "Uten topping";
@@ -161,61 +208,6 @@ function showToast(message) {
   window.clearTimeout(toastTimeout);
   toastTimeout = window.setTimeout(() => { toast.hidden = true; }, 5000);
 }
-
-function appendChatMessage(text, sender) {
-  const message = document.createElement("div");
-  message.className = `chat-message chat-message--${sender}`;
-  const label = document.createElement("strong");
-  label.textContent = sender === "user" ? "Du" : "Smaksprofessoren";
-  const body = document.createElement("p");
-  body.textContent = text;
-  message.append(label, body);
-  $("#chat-log").append(message);
-  message.scrollIntoView({ block: "nearest" });
-}
-
-function suggestCombination(prompt) {
-  const isNew = prompt === "nytt";
-  const combo = isNew
-    ? { chocolate: "dark", toppings: ["Bringebærbiter", "Havsalt", "Chiliflak"], message: "Prøv mørk sjokolade med bringebærbiter, havsalt og et lite sting av chili. Vil du prøve kombinasjonen?" }
-    : { chocolate: "milk", toppings: ["Myk karamell", "Havsalt", "Krokankrønsj"], message: "Til en gave foreslår jeg melkesjokolade med karamell, havsalt og krokankrønsj. Vil du prøve kombinasjonen?" };
-  state.pendingSuggestion = combo;
-  appendChatMessage(combo.message, "professor");
-
-  const apply = document.createElement("button");
-  apply.type = "button";
-  apply.className = "apply-suggestion";
-  apply.textContent = "Prøv på platen";
-  apply.addEventListener("click", () => {
-    state.chocolate = combo.chocolate;
-    state.selectedToppings = new Set(combo.toppings);
-    document.querySelectorAll("[data-chocolate]").forEach((button) => {
-      const selected = button.dataset.chocolate === state.chocolate;
-      button.classList.toggle("selected", selected);
-      button.setAttribute("aria-pressed", String(selected));
-    });
-    renderToppings();
-    updatePreview();
-    appendChatMessage("Forslaget er lagt til på platen din.", "professor");
-    apply.remove();
-  });
-  const wrapper = document.createElement("div");
-  wrapper.className = "chat-message chat-message--professor";
-  wrapper.append(apply);
-  $("#chat-log").append(wrapper);
-}
-
-document.querySelectorAll("[data-chocolate]").forEach((button) => {
-  button.addEventListener("click", () => {
-    state.chocolate = button.dataset.chocolate;
-    document.querySelectorAll("[data-chocolate]").forEach((option) => {
-      const selected = option === button;
-      option.classList.toggle("selected", selected);
-      option.setAttribute("aria-pressed", String(selected));
-    });
-    updatePreview();
-  });
-});
 
 $("#topping-filters").addEventListener("click", (event) => {
   const button = event.target.closest("[data-filter]");
@@ -295,37 +287,6 @@ $("#remove-image").addEventListener("click", () => {
   $("#image-upload").value = "";
   updatePreview();
 });
-$("#professor-toggle").addEventListener("click", () => {
-  const panel = $("#professor-panel");
-  panel.hidden = !panel.hidden;
-  $("#professor-toggle").setAttribute("aria-expanded", String(!panel.hidden));
-});
-
-$("#close-professor").addEventListener("click", () => {
-  $("#professor-panel").hidden = true;
-  $("#professor-toggle").setAttribute("aria-expanded", "false");
-});
-
-document.querySelectorAll("[data-prompt]").forEach((button) => {
-  button.addEventListener("click", () => suggestCombination(button.dataset.prompt));
-});
-
-$("#chat-form").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const input = $("#chat-input");
-  const text = input.value.trim();
-  if (!text) {
-    input.focus();
-    return;
-  }
-  appendChatMessage(text, "user");
-  input.value = "";
-  const answer = /mørk/i.test(text)
-    ? "Mørk sjokolade passer godt med bringebær, havsalt eller litt chili. Velg en kombinasjon, eller bruk forslaget mitt."
-    : "Karamell, havsalt og litt sprøtt er en god kombinasjon. Prøv en av knappene over for å legge et forslag på platen.";
-  appendChatMessage(answer, "professor");
-});
-
 $("#order-button").addEventListener("click", () => {
   showToast("Dette er en prototype, så ingen bestilling blir sendt.");
 });
